@@ -128,7 +128,7 @@ npm run build
 
 The upstream backend `npm test` script is a placeholder that always exits with an error. It is not a test suite and is not a required check. Installing backend dependencies and building the backend image are required. You do not need to invent a passing test command.
 
-CI must work without your computer, your local `.env` files, an Atlas account, or cloud deployment credentials. Publishing images and running the complete stack in CI are not required.
+Publishing images and running the complete stack in CI are not required.
 
 **Expected result:** A successful workflow run corresponds to the final commit you demonstrate. A green image build does not replace the live runtime demonstration.
 
