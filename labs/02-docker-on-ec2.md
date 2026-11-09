@@ -49,12 +49,10 @@ sudo docker run --rm hello-world
 
 Use `sudo docker` and `sudo docker compose` on this server. If Docker reports that it cannot connect to the daemon, check `sudo systemctl status docker`.
 
-## 4. Prepare for the MERN deployment
+## 4. Get the instructor’s Dockerized MERN app
 
-Have your working local MERN stack from the [repository README](../README.md) ready for deployment, including your frontend Dockerfile, backend Dockerfile, and Compose configuration.
+Download the ZIP from the `docker-compose-ci` branch and use its contents to set up a new repository.
 
-**Checkpoint:** Docker is ready on EC2, and your existing Compose stack runs locally.
-
-If you’re done for this session, run `exit`, stop the instance from the EC2 console, and choose **End Lab**.
+[Instructor repository](https://github.com/chakirouAlabani/lab-nov-04)
 
 [Docker Engine installation on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
