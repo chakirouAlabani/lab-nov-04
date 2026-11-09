@@ -36,3 +36,25 @@ jobs:
 
       - name: Build application images
         run: docker compose build frontend backend
+  publish:
+    needs: checks
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v6
+
+      - name: Sign in to GHCR and publish both images
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          printf '%s' "$GHCR_TOKEN" | docker login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+          image_prefix="ghcr.io/${GITHUB_REPOSITORY,,}"
+          frontend_image="$image_prefix-frontend:$GITHUB_SHA"
+          backend_image="$image_prefix-backend:$GITHUB_SHA"
+
+          docker build -t "$frontend_image" ./frontend
+          docker build -t "$backend_image" ./backend
+          docker push "$frontend_image"
+          docker push "$backend_image"
