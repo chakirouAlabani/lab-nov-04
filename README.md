@@ -142,3 +142,20 @@ When ready, show mw :
 4. Your app running
 
 
+
+## Run this branch with Docker Compose
+
+From the repository root, with Docker Engine and Compose available:
+
+```bash
+docker compose up -d --build --wait
+docker compose exec backend npm run seed
+```
+
+Open **http://localhost:8080** and check Users, Products, and Orders. The API is available through **http://localhost:8080/api/**. Only the frontend publishes a host port. To use a different port, set `HTTP_PORT` in a root `.env` file (for example, `HTTP_PORT=8081`).
+
+The frontend image builds with `VITE_API_BASE_URL=/api`. Nginx forwards those requests to Express on port 4000. Compose sets `MONGODB_URL=mongodb://mongodb:27017/mern_lab6` for the backend. The local stack requires no credentials or environment file.
+
+To verify persistence, edit a sample record, run `docker compose down`, and start the stack again. Check the edited record without reseeding. The `mongo-data` named volume survives `docker compose down`. Adding `--volumes` deletes the database data.
+
+GitHub Actions installs both sets of dependencies, lints and builds the frontend, validates Compose, and builds both images on pushes to `main` and `docker-compose-ci`.
