@@ -53,6 +53,4 @@ Use `sudo docker` and `sudo docker compose` on this server. If Docker reports th
 
 Download the ZIP from the `docker-compose-ci` branch and use its contents to set up a new repository.
 
-[Instructor repository](https://github.com/chakirouAlabani/lab-nov-04)
-
-[Docker Engine installation on Ubuntu](https://docs.docker.com/engine/install/ubuntu/)
+[Repo](https://github.com/chakirouAlabani/lab-nov-04)
