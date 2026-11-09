@@ -36,6 +36,7 @@ jobs:
 
       - name: Build application images
         run: docker compose build frontend backend
+        
   publish:
     needs: checks
     runs-on: ubuntu-latest
@@ -58,3 +59,38 @@ jobs:
           docker build -t "$backend_image" ./backend
           docker push "$frontend_image"
           docker push "$backend_image"
+
+  deploy:
+    needs: publish
+    runs-on: [self-hosted, linux, x64, ec2-deploy]
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      packages: read
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Deploy the published images
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          image_prefix="ghcr.io/${GITHUB_REPOSITORY,,}"
+          deploy_dir="$HOME/mern-deploy"
+          mkdir -p "$deploy_dir"
+          cp compose.deploy.yaml "$deploy_dir/"
+          cd "$deploy_dir"
+
+          printf 'FRONTEND_IMAGE=%s-frontend:%s\nBACKEND_IMAGE=%s-backend:%s\n' \
+            "$image_prefix" "$GITHUB_SHA" "$image_prefix" "$GITHUB_SHA" > .env
+
+          docker_config="$(mktemp -d)"
+          trap 'sudo -n rm -rf -- "$docker_config"' EXIT
+          printf '%s' "$GHCR_TOKEN" | sudo -n docker --config "$docker_config" \
+            login ghcr.io -u "$GITHUB_ACTOR" --password-stdin
+
+          sudo -n docker --config "$docker_config" compose -f compose.deploy.yaml \
+            up -d --pull always --wait --wait-timeout 120
+          curl --fail --silent --show-error --retry 5 --retry-all-errors http://localhost/api/
